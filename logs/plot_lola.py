@@ -335,7 +335,6 @@ def new_atomic_plot(folder, legend_ncol=3):
 
     fig.savefig(OUTPUTFILE, bbox_inches='tight')
 
-#%% 
 def plot_knowledge(folder, stream_name):
     INPUTFILE=folder+"/TWC-output-window.txt"
     outfile=folder+"/TWC-output-window.pdf"
@@ -346,8 +345,8 @@ def plot_knowledge(folder, stream_name):
     ))
 
     stage_colours = {
-        'read': '#4466dd',
-        'write': '#eeaa22'
+        'read': '#6688ee',
+        'write': '#ee6688'
     }
 
     fig = plt.figure(figsize=(9,2))
@@ -378,6 +377,57 @@ def plot_knowledge(folder, stream_name):
     fig.savefig(outfile, bbox_inches='tight')
 #%%
 
+def plot_labels(stream, ax=plt, y_offset=0, conditinal_format=None, **kwargs):
+    for x, l in stream:
+        extra_format = dict()
+        if conditinal_format:
+            extra_format = conditinal_format((x, l))
+        ax.text(x, y_offset, l, **kwargs, **extra_format)
+
+def plot_sol(folder,input_file=None, output_file=None):
+    INPUTFILE=folder + '/' + (input_file or "TWC-output-window.txt")
+    outfile=folder + '/' + (output_file or "TWC-output-window.pdf")
+
+    streams = split_dict(
+    zero_index(
+    read_lola_output(INPUTFILE,['timeout', 'acc', 'clockEcho'])
+    ))
+
+    colours = {
+        'scan': '#ee6688',
+        'timer': '#6688ee'
+    }
+
+    fig = plt.figure(figsize=(9,2))
+    ax = plt.subplot()
+
+    ax.set_axisbelow(True)
+    ax.set_yticks([-1, 1])
+    ax.set_yticklabels(['false', 'true'])
+    ax.set_ylim(-1.2,1.2)
+
+    plot_stages(
+        split_merged_stream(streams['clockEcho']), 
+        ax=ax, marker='.', s=200, zorder=2, color_map=colours)
+    plot_binary(streams['timeout'], ax=ax, zorder=1, color="#444488")
+    plot_labels(streams['acc'], y_offset=0.3, horizontalalignment='center', conditinal_format=lambda x: {'c':'#cc0000'} if x[1] > 10 else {})
+
+    # Shrink current axis's height by 10% on the bottom
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0 + box.height * 0.4,
+                    box.width, box.height * 0.6])
+    
+    ax.set_ylabel(f"Timeout")
+    ax.set_xlabel("Time step")
+
+    # Put a legend below current axis
+    ax.legend(loc='upper left', bbox_to_anchor=(-.1, -.25),
+            fancybox=True, shadow=True, ncol=2)
+
+    fig.savefig(outfile, bbox_inches='tight')
+
+plot_sol('SOL_2025-05-15_13-29-51')
+plot_sol('SOL_2025-05-15_13-29-51', 'TWC-output-window2.txt', 'TWC-output-window2.pdf')
 
 
 # %% MAPLE-1
@@ -397,4 +447,4 @@ plot_knowledge('kLaser_2025-05-15_10-27-19', 'kLaserScanEcho')
 plot_knowledge('kDirections_2025-05-15_11-01-49', 'kDirectionsEcho')
 plot_knowledge('kHandling_2025-05-15_11-07-17', 'kHandlingAnomalyEcho')
 plot_knowledge('kIsLegit_2025-05-15_11-12-34', 'kIsLegitEcho')
-plot_knowledge('kPlannedLidarMask_2025-05-15_11-28-09', 'kPlannedLidarMask')
+plot_knowledge('kPlannedLidarMask_2025-05-15_11-28-09', 'kPlannedLidarMaskEcho')
