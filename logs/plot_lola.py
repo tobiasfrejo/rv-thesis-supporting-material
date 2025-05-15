@@ -375,7 +375,6 @@ def plot_knowledge(folder, stream_name):
             fancybox=True, shadow=True, ncol=2)
 
     fig.savefig(outfile, bbox_inches='tight')
-#%%
 
 def plot_labels(stream, ax=plt, y_offset=0, conditinal_format=None, **kwargs):
     for x, l in stream:
@@ -426,9 +425,114 @@ def plot_sol(folder,input_file=None, output_file=None):
 
     fig.savefig(outfile, bbox_inches='tight')
 
-plot_sol('SOL_2025-05-15_13-29-51')
-plot_sol('SOL_2025-05-15_13-29-51', 'TWC-output-window2.txt', 'TWC-output-window2.pdf')
+def plot_trigger(folder,input_file=None, output_file=None):
+    INPUTFILE=folder + '/' + (input_file or "TWC-output-window.txt")
+    outfile=folder + '/' + (output_file or "TWC-output-window.pdf")
 
+    streams = split_dict(
+    zero_index(
+    read_lola_output(INPUTFILE,['correctOrder', 'scanOut'])
+    ))
+
+    colours = {
+        's': '#ee6688',
+        'm': '#6688ee'
+    }
+
+    fig = plt.figure(figsize=(9,2))
+    ax = plt.subplot()
+
+    ax.set_axisbelow(True)
+    ax.set_yticks([-1, 1])
+    ax.set_yticklabels(['false', 'true'])
+    ax.set_ylim(-1.2,1.2)
+
+    plot_stages(
+        split_merged_stream(streams['scanOut']), 
+        ax=ax, marker='.', s=200, zorder=2, color_map=colours)
+    plot_binary(streams['correctOrder'], ax=ax, zorder=1, color="#444488")
+
+    # Shrink current axis's height by 10% on the bottom
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0 + box.height * 0.4,
+                    box.width, box.height * 0.6])
+    
+    ax.set_ylabel(f"Trigger\ncorrect order")
+    ax.set_xlabel("Time step")
+
+    # Put a legend below current axis
+    ax.legend(loc='upper left', bbox_to_anchor=(-.1, -.25),
+            fancybox=True, shadow=True, ncol=2)
+
+    fig.savefig(outfile, bbox_inches='tight')
+
+
+#%%
+def plot_phase_write(folder, node_name, input_file=None, output_file=None, ncol=3):
+    INPUTFILE=folder + '/' + (input_file or "TWC-output-window.txt")
+    outfile=folder + '/' + (output_file or "TWC-output-window.pdf")
+
+    streams = split_dict(
+    zero_index(
+    read_lola_output(INPUTFILE,['s', 'error'])
+    ))
+
+    fig = plt.figure(figsize=(9,2))
+    ax = plt.subplot()
+
+    ax.set_axisbelow(True)
+    ax.set_yticks([-1, 1])
+    ax.set_yticklabels(['false', 'true'])
+    ax.set_ylim(-1.2,1.2)
+
+    opens = []
+    closes = []
+
+    for step, s in streams['s']:
+        if s.startswith('start'):
+            opens.append(step)
+        elif s.startswith('end'):
+            closes.append(step)
+    
+    bars = []
+    bars_ws = []
+    for s,e in zip(opens, closes):
+        bars.append(s)
+        bars_ws.append(e-s)
+    
+    ax.barh([0]*len(bars), bars_ws, left=bars, facecolor="white", edgecolor="green", zorder=2, label='phase duration')
+
+    colours = {
+        'start':'#cbd7ea',
+        'end': '#b1d0ad',
+        'end_ok': '#b1d0ad',
+        'end_nom': '#e02e44',
+    }
+
+    plot_stages(
+        split_merged_stream(streams['s']), 
+        ax=ax, marker='.', s=200, zorder=2, color_map=colours)
+    plot_binary(streams['error'], ax=ax, zorder=1, color="#444488")
+
+    # Shrink current axis's height by 10% on the bottom
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0 + box.height * 0.4,
+                    box.width, box.height * 0.6])
+    
+    ax.set_ylabel(f"Phase write\nerror")
+    ax.set_xlabel("Time step")
+    ax.set_title(f'Phase write — {node_name}')
+
+    # Put a legend below current axis
+    ax.legend(loc='upper left', bbox_to_anchor=(-.1, -.5),
+            fancybox=True, shadow=True, ncol=ncol)
+
+    fig.savefig(outfile, bbox_inches='tight')
+
+
+plot_phase_write('AnalysisPhaseWrite_2025-05-15_15-47-17', 'Analysis')
+plot_phase_write('ExecutePhaseWrite_2025-05-15_15-50-36', 'Execute', 'TWC-output.txt', 'TWC-output.pdf', ncol=4)
+plot_phase_write('ExecutePhaseWrite_2025-05-15_15-50-36', 'Execute (Rearranged for error)', 'TWC-output-alt.txt', 'TWC-output-alt.pdf', ncol=4)
 
 # %% MAPLE-1
 maple_plot("MAPLE-1_2025-05-14_09-31-56")
@@ -448,3 +552,11 @@ plot_knowledge('kDirections_2025-05-15_11-01-49', 'kDirectionsEcho')
 plot_knowledge('kHandling_2025-05-15_11-07-17', 'kHandlingAnomalyEcho')
 plot_knowledge('kIsLegit_2025-05-15_11-12-34', 'kIsLegitEcho')
 plot_knowledge('kPlannedLidarMask_2025-05-15_11-28-09', 'kPlannedLidarMaskEcho')
+
+# %% Sign of life
+plot_sol('SOL_2025-05-15_13-29-51')
+plot_sol('SOL_2025-05-15_13-29-51', 'TWC-output-window2.txt', 'TWC-output-window2.pdf')
+
+#%%
+plot_trigger('scanTrigger_2025-05-15_14-22-36')
+plot_trigger('scanTrigger_2025-05-15_14-22-36', 'TWC-output-end.txt', 'TWC-output-end.pdf')
