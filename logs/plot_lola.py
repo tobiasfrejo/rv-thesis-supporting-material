@@ -128,14 +128,6 @@ def maple_plot(folder, legend_ncol=5):
 
     create_maple_plot(streams, OUTPUTFILE, legend_ncol)
 
-# %% MAPLE-1
-maple_plot("MAPLE-1_2025-05-14_09-31-56")
-
-
-# %% SINGLETON
-maple_plot("singleton_2025-05-14_11-45-04", legend_ncol=3)
-
-#%%
 def tag_list(l, tag=None):
     return [
         (v, tag)
@@ -150,6 +142,8 @@ def insert_into_dict_list_and_sort(d:dict, key:str, new_values:list[tuple]):
 
 def create_open_bars(stages):
     stage_split = split_merged_stream(stages)
+
+    print(stage_split)
 
     stages = set()
     end_stages = set()
@@ -305,8 +299,6 @@ def atomic_plot(folder, legend_ncol=3):
     fig.savefig(OUTPUTFILE, bbox_inches='tight')
 
 
-# atomic_plot("atomicity-1r_2025-05-14_12-05-43")
-
 def new_atomic_plot(folder, legend_ncol=3):
     INPUTFILE=folder+"/TWC-output-window.txt"
     OUTPUTFILE=folder+"/TWC-output-window.pdf"
@@ -343,4 +335,66 @@ def new_atomic_plot(folder, legend_ncol=3):
 
     fig.savefig(OUTPUTFILE, bbox_inches='tight')
 
+#%% 
+def plot_knowledge(folder, stream_name):
+    INPUTFILE=folder+"/TWC-output-window.txt"
+    outfile=folder+"/TWC-output-window.pdf"
+
+    streams = split_dict(
+    zero_index(
+    read_lola_output(INPUTFILE,[stream_name, 'missed'])
+    ))
+
+    stage_colours = {
+        'read': '#4466dd',
+        'write': '#eeaa22'
+    }
+
+    fig = plt.figure(figsize=(9,2))
+    ax = plt.subplot()
+    ax.grid(axis='x')
+    # plt.set_axisbelow(True)
+    ax.set_axisbelow(True)
+    ax.set_yticks([-1, 1])
+    ax.set_yticklabels(['false', 'true'])
+    ax.set_ylim(-1.2,1.2)
+    ax.set_ylabel(f"Knowledge\nmissed")
+    ax.set_xlabel("Time step")
+
+    plot_stages(
+        split_merged_stream(streams[stream_name]), 
+        ax=ax, marker='.', color_map=stage_colours, s=200, zorder=2)
+    plot_binary(streams['missed'], ax=ax, zorder=1, color="#444488")
+
+    # Shrink current axis's height by 10% on the bottom
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0 + box.height * 0.4,
+                    box.width, box.height * 0.6])
+
+    # Put a legend below current axis
+    ax.legend(loc='upper left', bbox_to_anchor=(-.1, -.25),
+            fancybox=True, shadow=True, ncol=2)
+
+    fig.savefig(outfile, bbox_inches='tight')
+#%%
+
+
+
+# %% MAPLE-1
+maple_plot("MAPLE-1_2025-05-14_09-31-56")
+
+# %% SINGLETON
+maple_plot("singleton_2025-05-14_11-45-04", legend_ncol=3)
+
+# %% Recovering atomic
+atomic_plot("atomicity-1r_2025-05-14_12-05-43")
+
+# %% New Atomicity
 new_atomic_plot('new-atomicity_2025-05-14_14-30-34')
+
+# %%
+plot_knowledge('kLaser_2025-05-15_10-27-19', 'kLaserScanEcho')
+plot_knowledge('kDirections_2025-05-15_11-01-49', 'kDirectionsEcho')
+plot_knowledge('kHandling_2025-05-15_11-07-17', 'kHandlingAnomalyEcho')
+plot_knowledge('kIsLegit_2025-05-15_11-12-34', 'kIsLegitEcho')
+plot_knowledge('kPlannedLidarMask_2025-05-15_11-28-09', 'kPlannedLidarMask')

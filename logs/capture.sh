@@ -2,7 +2,7 @@
 
 set -e
 
-WKDIR=$(dirname $(realpath $0))../../robosapiens-adaptive-platform-turtlebot
+WKDIR=$(dirname $(realpath $0))/../../robosapiens-adaptive-platform-turtlebot
 HWDIR="$WKDIR/maple-loops/HelloWorld"
 DOCKERDIR="$WKDIR/docker"
 NOW=$(date +"%Y-%m-%d_%H-%M-%S")
@@ -36,6 +36,8 @@ read -p "Now, start the devcontainer, then press enter to continue"
 
 echo "Starting main in Docker"
 docker compose exec $DEVCONTAINER bash -c "cd /ws/maple-loops/HelloWorld && python3 main.py"
+
+git rev-parse HEAD > $DST_DIR/git-head.txt
 
 cd $PREV_PWD
 
