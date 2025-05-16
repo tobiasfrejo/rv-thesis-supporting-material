@@ -621,6 +621,8 @@ plot_phase_write('MonitorPhaseWrite_2025-05-16_11-47-36', 'Monitor', 'TWC-output
 plot_phase_write('PlanPhaseWrite_2025-05-16_11-51-56', 'Plan (before fix)', 'TWC-output.txt', 'TWC-output.pdf')
 plot_phase_write('PlanPhaseWrite_2025-05-16_11-56-53', 'Plan', 'TWC-output.txt', 'TWC-output.pdf')
 
+plot_phase_write('AnalysisPhaseWrite_2025-05-16_14-17-14', 'Analysis (fixed)')
+
 # %% Completion
 plot_anomple('anomple_2025-05-16_13-18-28', 'twc.txt', 'twc.pdf', title="Completion, timeout after 10 timer ticks @100 ms")
 plot_anomple('anomple_2025-05-16_13-39-08', 'twc.txt', 'twc.pdf', title="Completion, timeout after 50 timer ticks @100 ms")
