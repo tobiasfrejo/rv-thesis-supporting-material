@@ -79,7 +79,7 @@ def plot_stages(stages, ax=plt, color_map=None, **kwargs):
 
 
 
-def create_maple_plot(streams, outfile, legend_ncol=5):
+def create_maple_plot(streams, outfile, legend_ncol=5, title=None):
     stage_colours = {
         'm':'#cbd7ea',
         'a': '#b1d0ad',
@@ -92,6 +92,9 @@ def create_maple_plot(streams, outfile, legend_ncol=5):
 
     fig = plt.figure(figsize=(9,2))
     ax = plt.subplot()
+    if title:
+        ax.set_title(title)
+
     ax.grid(axis='x')
     # plt.set_axisbelow(True)
     ax.set_axisbelow(True)
@@ -117,7 +120,7 @@ def create_maple_plot(streams, outfile, legend_ncol=5):
 
     fig.savefig(outfile, bbox_inches='tight')
 
-def maple_plot(folder, legend_ncol=5):
+def maple_plot(folder, legend_ncol=5, title=None):
     INPUTFILE=folder+"/TWC-output-window.txt"
     OUTPUTFILE=folder+"/TWC-output-window.pdf"
 
@@ -126,7 +129,7 @@ def maple_plot(folder, legend_ncol=5):
     read_lola_output(INPUTFILE,['stageout', 'maple'])
     ))
 
-    create_maple_plot(streams, OUTPUTFILE, legend_ncol)
+    create_maple_plot(streams, OUTPUTFILE, legend_ncol, title=title)
 
 def tag_list(l, tag=None):
     return [
@@ -262,7 +265,7 @@ def plot_atomic_bars(stages, ax=plt, **kwargs):
     
     return y_ticks, y_ticklabels
 
-def atomic_plot(folder, legend_ncol=3):
+def atomic_plot(folder, legend_ncol=3, title=None):
     INPUTFILE=folder+"/TWC-output-window.txt"
     OUTPUTFILE=folder+"/TWC-output-window.pdf"
 
@@ -274,6 +277,8 @@ def atomic_plot(folder, legend_ncol=3):
 
     fig = plt.figure(figsize=(8,2))
     ax = plt.subplot()
+    if title:
+        ax.set_title(title)
     
     fig.tight_layout()
 
@@ -299,7 +304,7 @@ def atomic_plot(folder, legend_ncol=3):
     fig.savefig(OUTPUTFILE, bbox_inches='tight')
 
 
-def new_atomic_plot(folder, legend_ncol=3):
+def new_atomic_plot(folder, legend_ncol=3, title=None):
     INPUTFILE=folder+"/TWC-output-window.txt"
     OUTPUTFILE=folder+"/TWC-output-window.pdf"
 
@@ -311,6 +316,8 @@ def new_atomic_plot(folder, legend_ncol=3):
 
     fig = plt.figure(figsize=(8,2))
     ax = plt.subplot()
+    if title:
+        ax.set_title(title)
     
     fig.tight_layout()
 
@@ -335,7 +342,7 @@ def new_atomic_plot(folder, legend_ncol=3):
 
     fig.savefig(OUTPUTFILE, bbox_inches='tight')
 
-def plot_knowledge(folder, stream_name):
+def plot_knowledge(folder, stream_name, title=None):
     INPUTFILE=folder+"/TWC-output-window.txt"
     outfile=folder+"/TWC-output-window.pdf"
 
@@ -351,6 +358,8 @@ def plot_knowledge(folder, stream_name):
 
     fig = plt.figure(figsize=(9,2))
     ax = plt.subplot()
+    if title:
+        ax.set_title(title)
     ax.grid(axis='x')
     # plt.set_axisbelow(True)
     ax.set_axisbelow(True)
@@ -383,7 +392,7 @@ def plot_labels(stream, ax=plt, y_offset=0, conditinal_format=None, **kwargs):
             extra_format = conditinal_format((x, l))
         ax.text(x, y_offset, l, **kwargs, **extra_format)
 
-def plot_sol(folder,input_file=None, output_file=None):
+def plot_sol(folder,input_file=None, output_file=None, title=None):
     INPUTFILE=folder + '/' + (input_file or "TWC-output-window.txt")
     outfile=folder + '/' + (output_file or "TWC-output-window.pdf")
 
@@ -399,6 +408,8 @@ def plot_sol(folder,input_file=None, output_file=None):
 
     fig = plt.figure(figsize=(9,2))
     ax = plt.subplot()
+    if title:
+        ax.set_title(title)
 
     ax.set_axisbelow(True)
     ax.set_yticks([-1, 1])
@@ -425,7 +436,7 @@ def plot_sol(folder,input_file=None, output_file=None):
 
     fig.savefig(outfile, bbox_inches='tight')
 
-def plot_trigger(folder,input_file=None, output_file=None):
+def plot_trigger(folder,input_file=None, output_file=None, title=None):
     INPUTFILE=folder + '/' + (input_file or "TWC-output-window.txt")
     outfile=folder + '/' + (output_file or "TWC-output-window.pdf")
 
@@ -441,6 +452,8 @@ def plot_trigger(folder,input_file=None, output_file=None):
 
     fig = plt.figure(figsize=(9,2))
     ax = plt.subplot()
+    if title:
+        ax.set_title(title)
 
     ax.set_axisbelow(True)
     ax.set_yticks([-1, 1])
@@ -528,31 +541,31 @@ def plot_phase_write(folder, node_name, input_file=None, output_file=None, ncol=
     fig.savefig(outfile, bbox_inches='tight')
 
 # %% MAPLE-1
-maple_plot("MAPLE-1_2025-05-14_09-31-56")
+maple_plot("MAPLE-1_2025-05-14_09-31-56", title="MAPLE property")
 
 # %% SINGLETON
-maple_plot("singleton_2025-05-14_11-45-04", legend_ncol=3)
+maple_plot("singleton_2025-05-14_11-45-04", legend_ncol=3, title="Singleton property")
 
 # %% Recovering atomic
-atomic_plot("atomicity-1r_2025-05-14_12-05-43")
+atomic_plot("atomicity-1r_2025-05-14_12-05-43", title="Atomicity (with recovery)")
 
 # %% New Atomicity
-new_atomic_plot('new-atomicity_2025-05-14_14-30-34')
+new_atomic_plot('new-atomicity_2025-05-14_14-30-34', title="Atomicity (with sub-loops)")
 
 # %%
-plot_knowledge('kLaser_2025-05-15_10-27-19', 'kLaserScanEcho')
-plot_knowledge('kDirections_2025-05-15_11-01-49', 'kDirectionsEcho')
-plot_knowledge('kHandling_2025-05-15_11-07-17', 'kHandlingAnomalyEcho')
-plot_knowledge('kIsLegit_2025-05-15_11-12-34', 'kIsLegitEcho')
-plot_knowledge('kPlannedLidarMask_2025-05-15_11-28-09', 'kPlannedLidarMaskEcho')
+plot_knowledge('kLaser_2025-05-15_10-27-19', 'kLaserScanEcho', title="Knowledge (laser)")
+plot_knowledge('kDirections_2025-05-15_11-01-49', 'kDirectionsEcho', title="Knowledge (directions)")
+plot_knowledge('kHandling_2025-05-15_11-07-17', 'kHandlingAnomalyEcho', title="Knowledge (handling_anomaly)")
+plot_knowledge('kIsLegit_2025-05-15_11-12-34', 'kIsLegitEcho', title="Knowledge (isLegit)")
+plot_knowledge('kPlannedLidarMask_2025-05-15_11-28-09', 'kPlannedLidarMaskEcho', title="Knowledge (planned_lidar_mask)")
 
 # %% Sign of life
-plot_sol('SOL_2025-05-15_13-29-51')
-plot_sol('SOL_2025-05-15_13-29-51', 'TWC-output-window2.txt', 'TWC-output-window2.pdf')
+plot_sol('SOL_2025-05-15_13-29-51', title="Sign-of-life")
+plot_sol('SOL_2025-05-15_13-29-51', 'TWC-output-window2.txt', 'TWC-output-window2.pdf', title="Sign-of-life with introduced error")
 
 #%%
-plot_trigger('scanTrigger_2025-05-15_14-22-36')
-plot_trigger('scanTrigger_2025-05-15_14-22-36', 'TWC-output-end.txt', 'TWC-output-end.pdf')
+plot_trigger('scanTrigger_2025-05-15_14-22-36', title="Trigger")
+plot_trigger('scanTrigger_2025-05-15_14-22-36', 'TWC-output-end.txt', 'TWC-output-end.pdf', title="Trigger (when managing system stops)")
 
 
 #%%
@@ -563,3 +576,5 @@ plot_phase_write('LegitimatePhaseWrite_2025-05-16_11-39-45', 'Legitimate', 'TWC-
 plot_phase_write('MonitorPhaseWrite_2025-05-16_11-47-36', 'Monitor', 'TWC-output.txt', 'TWC-output.pdf', ncol=4)
 plot_phase_write('PlanPhaseWrite_2025-05-16_11-51-56', 'Plan (before fix)', 'TWC-output.txt', 'TWC-output.pdf')
 plot_phase_write('PlanPhaseWrite_2025-05-16_11-56-53', 'Plan', 'TWC-output.txt', 'TWC-output.pdf')
+
+# %%
