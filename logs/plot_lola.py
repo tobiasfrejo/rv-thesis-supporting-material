@@ -540,6 +540,50 @@ def plot_phase_write(folder, node_name, input_file=None, output_file=None, ncol=
 
     fig.savefig(outfile, bbox_inches='tight')
 
+def plot_anomple(folder,input_file=None, output_file=None, title=None):
+    INPUTFILE=folder + '/' + (input_file or "TWC-output-window.txt")
+    outfile=folder + '/' + (output_file or "TWC-output-window.pdf")
+
+    streams = split_dict(
+    zero_index(
+    read_lola_output(INPUTFILE,['timeout', 'acc', 't'])
+    ))
+
+    colours = {
+        'timer': '#cbd7ea',
+        'anom': '#e02e44',
+        'end_e': '#a251cb'
+    }
+
+    fig = plt.figure(figsize=(9,2))
+    ax = plt.subplot()
+    if title:
+        ax.set_title(title)
+
+    ax.set_axisbelow(True)
+    ax.set_yticks([-1, 1])
+    ax.set_yticklabels(['false', 'true'])
+    ax.set_ylim(-1.2,1.2)
+
+    plot_stages(
+        split_merged_stream(streams['t']), 
+        ax=ax, marker='.', s=200, zorder=2, color_map=colours)
+    plot_binary(streams['timeout'], ax=ax, zorder=1, color="#444488")
+
+    # Shrink current axis's height by 10% on the bottom
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0 + box.height * 0.4,
+                    box.width, box.height * 0.6])
+    
+    ax.set_ylabel(f"ANOMPLE\ntimeout")
+    ax.set_xlabel("Time step")
+
+    # Put a legend below current axis
+    ax.legend(loc='upper left', bbox_to_anchor=(-.1, -.25),
+            fancybox=True, shadow=True, ncol=2)
+
+    fig.savefig(outfile, bbox_inches='tight')
+
 # %% MAPLE-1
 maple_plot("MAPLE-1_2025-05-14_09-31-56", title="MAPLE property")
 
@@ -577,4 +621,6 @@ plot_phase_write('MonitorPhaseWrite_2025-05-16_11-47-36', 'Monitor', 'TWC-output
 plot_phase_write('PlanPhaseWrite_2025-05-16_11-51-56', 'Plan (before fix)', 'TWC-output.txt', 'TWC-output.pdf')
 plot_phase_write('PlanPhaseWrite_2025-05-16_11-56-53', 'Plan', 'TWC-output.txt', 'TWC-output.pdf')
 
-# %%
+# %% Completion
+plot_anomple('anomple_2025-05-16_13-18-28', 'twc.txt', 'twc.pdf', title="Completion, timeout after 10 timer ticks @100 ms")
+plot_anomple('anomple_2025-05-16_13-39-08', 'twc.txt', 'twc.pdf', title="Completion, timeout after 50 timer ticks @100 ms")
