@@ -466,8 +466,6 @@ def plot_trigger(folder,input_file=None, output_file=None):
 
     fig.savefig(outfile, bbox_inches='tight')
 
-
-#%%
 def plot_phase_write(folder, node_name, input_file=None, output_file=None, ncol=3):
     INPUTFILE=folder + '/' + (input_file or "TWC-output-window.txt")
     outfile=folder + '/' + (output_file or "TWC-output-window.pdf")
@@ -529,11 +527,6 @@ def plot_phase_write(folder, node_name, input_file=None, output_file=None, ncol=
 
     fig.savefig(outfile, bbox_inches='tight')
 
-
-plot_phase_write('AnalysisPhaseWrite_2025-05-15_15-47-17', 'Analysis')
-plot_phase_write('ExecutePhaseWrite_2025-05-15_15-50-36', 'Execute', 'TWC-output.txt', 'TWC-output.pdf', ncol=4)
-plot_phase_write('ExecutePhaseWrite_2025-05-15_15-50-36', 'Execute (Rearranged for error)', 'TWC-output-alt.txt', 'TWC-output-alt.pdf', ncol=4)
-
 # %% MAPLE-1
 maple_plot("MAPLE-1_2025-05-14_09-31-56")
 
@@ -560,3 +553,13 @@ plot_sol('SOL_2025-05-15_13-29-51', 'TWC-output-window2.txt', 'TWC-output-window
 #%%
 plot_trigger('scanTrigger_2025-05-15_14-22-36')
 plot_trigger('scanTrigger_2025-05-15_14-22-36', 'TWC-output-end.txt', 'TWC-output-end.pdf')
+
+
+#%%
+plot_phase_write('AnalysisPhaseWrite_2025-05-15_15-47-17', 'Analysis')
+plot_phase_write('ExecutePhaseWrite_2025-05-15_15-50-36', 'Execute', 'TWC-output.txt', 'TWC-output.pdf', ncol=4)
+plot_phase_write('ExecutePhaseWrite_2025-05-15_15-50-36', 'Execute (Rearranged for error)', 'TWC-output-alt.txt', 'TWC-output-alt.pdf', ncol=4)
+plot_phase_write('LegitimatePhaseWrite_2025-05-16_11-39-45', 'Legitimate', 'TWC-output.txt', 'TWC-output.pdf', ncol=4)
+plot_phase_write('MonitorPhaseWrite_2025-05-16_11-47-36', 'Monitor', 'TWC-output.txt', 'TWC-output.pdf', ncol=4)
+plot_phase_write('PlanPhaseWrite_2025-05-16_11-51-56', 'Plan (before fix)', 'TWC-output.txt', 'TWC-output.pdf')
+plot_phase_write('PlanPhaseWrite_2025-05-16_11-56-53', 'Plan', 'TWC-output.txt', 'TWC-output.pdf')
